@@ -1,2 +1,2 @@
 #!/bin/bash
-awk 'BEGIN{for(i=97;i<123;i++)for(j=97;j<123;j++)if(i!=111&&j!=111||i!=111&&j==111||i==111&&j!=111)printf "%c%c\n",i,j}'
+tr -d oo <<< $(echo {a..z}{a..z}) | fold -w2
