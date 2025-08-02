@@ -1,2 +1,2 @@
 #!/bin/bash
-tr -d oo <<< $(echo {a..z}{a..z}) | fold -w2
+printf "%s\n" {a..z}{a..z} | grep -vx oo
