@@ -1,0 +1,51 @@
+
+Scale Up Web Infrastructure Explanation
+
+This infrastructure consists of three separate servers, each dedicated to a specific component of the web application: the web server, the application server, and the database server. Additionally, it includes a load balancer cluster with two HAProxy instances for high availability.
+Components Added and Their Purpose:
+
+    Load Balancer Cluster (HAProxy):
+
+        Why added? To distribute incoming client requests evenly across multiple backend servers and to provide high availability.
+
+        The two HAProxy servers are configured in an Active-Active cluster to ensure continuous service even if one load balancer fails. This improves fault tolerance and reduces downtime.
+
+    Web Server (Nginx) on Its Own Server:
+
+        Why separated? The web server handles HTTP requests, static content, and acts as a reverse proxy. Isolating it improves performance and security by limiting the responsibilities on a single server.
+
+        Dedicated resources help it efficiently serve content without competing with application logic or database operations.
+
+    Application Server on Its Own Server:
+
+        Why separated? The application server processes the business logic and interacts with the database. Separating it from the web server allows for better scalability and easier maintenance.
+
+        This separation also allows application-specific optimizations without affecting the web server.
+
+    Database Server (MySQL) on Its Own Server:
+
+        Why separated? The database is a resource-intensive component needing dedicated resources to handle data storage and queries efficiently.
+
+        Isolating the database enhances data security and allows it to be scaled independently as the application grows.
+
+How This Infrastructure Works:
+
+    When a user visits www.foobar.com, DNS directs the request to one of the load balancers.
+
+    The load balancers distribute requests across the web servers to balance traffic and ensure no single server becomes overloaded.
+
+    The web server forwards dynamic requests to the application server, which executes the business logic.
+
+    The application server communicates with the database server to read or write data as needed.
+
+    Responses flow back through the application server and web server to the user.
+
+Benefits:
+
+    Fault tolerance: The HAProxy load balancer cluster avoids a single point of failure at the load balancer layer.
+
+    Scalability: Each tier can be scaled independently based on load. For example, more web servers or app servers can be added without affecting the database server.
+
+    Improved performance: Dedicated servers ensure resources aren’t competed for across different components.
+
+    Easier maintenance: Updates and patches can be applied to individual components without impacting others.
