@@ -87,3 +87,6 @@ Issues with This Infrastructure
     Identical Components on All Servers
 
         If every server has web, application, and database layers, a single vulnerability could compromise all layers at once; also wastes resources for workloads that could be separated for efficiency.
+
+
+        Link to diagram: https://drive.google.com/file/d/1G5nwirnC-meLXURqGAuF7cgpQtMJOP9n/view?usp=sharing

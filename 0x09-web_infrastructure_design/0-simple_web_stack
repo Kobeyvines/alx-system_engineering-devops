@@ -43,3 +43,6 @@ Limitations of This Setup
     Downtime During Maintenance – Restarting Nginx or deploying new code will make the site temporarily unavailable.
 
     Scalability Issues – The single server can only handle a limited number of simultaneous requests; heavy traffic can slow or crash the site.
+
+
+    Link to my Diagram: https://drive.google.com/file/d/17Ri1N_kWoCNrVlvwVa6adtu23SMFXP_6/view?usp=sharing
