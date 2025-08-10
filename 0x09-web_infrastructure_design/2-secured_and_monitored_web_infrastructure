@@ -1,0 +1,89 @@
+How the Infrastructure Works
+
+This is a three-server setup for www.foobar.com, but now it’s secured and monitored.
+Components
+
+    1 Load Balancer (HAProxy)
+
+    1 Web Server (Nginx)
+
+    1 Application Server
+
+    1 MySQL Database
+
+    3 Firewalls
+
+    1 SSL Certificate
+
+    3 Monitoring Clients (e.g., for Sumologic, Datadog, or Prometheus)
+
+Flow of a Request
+
+    The user’s browser requests https://www.foobar.com.
+
+    DNS resolves www.foobar.com → load balancer IP.
+
+    Firewall 1 (before load balancer) filters malicious/unauthorized traffic.
+
+    Load Balancer (HAProxy) terminates the SSL connection (decrypts HTTPS → HTTP for backend communication).
+
+    Firewall 2 (between load balancer and web/application servers) protects internal services from direct attacks.
+
+    Web Server (Nginx) handles static files or forwards to the application server.
+
+    Application Server processes the request and queries the MySQL database.
+
+    Firewall 3 (in front of the database) ensures only authorized connections from the application server can access it.
+
+    Response is sent back through the same path, encrypted with HTTPS for the client.
+
+Monitoring clients on each server continuously send metrics, logs, and alerts to a centralized monitoring service.
+Why We Added Each Element
+
+    Firewalls (3 total)
+
+        Firewall 1: Protects load balancer from external threats.
+
+        Firewall 2: Protects app/web servers from lateral attacks or compromised load balancer.
+
+        Firewall 3: Protects database from unauthorized access.
+
+    SSL Certificate
+
+        Encrypts client-server communication to prevent data interception or tampering.
+
+    Monitoring Clients
+
+        Installed on all servers to collect metrics (CPU, memory, disk usage, QPS, error rates) and send them to a monitoring platform for alerts and analysis.
+
+Purpose of Key Features
+
+    Firewalls – Block unauthorized access, filter traffic by IP, port, and protocol.
+
+    HTTPS (via SSL certificate) – Encrypts data between the browser and server, ensuring confidentiality and integrity.
+
+    Monitoring – Tracks system health, detects anomalies, and triggers alerts before failures impact users.
+
+    How Monitoring Collects Data – Agents (clients) run locally, gathering logs, metrics, and events, then pushing them to a central monitoring service over a secure channel.
+
+Example – Monitoring QPS (Queries Per Second) of Web Server:
+
+    Configure monitoring client to track Nginx access logs.
+
+    Parse log timestamps to count requests per second.
+
+    Send metrics to monitoring dashboard for visualization and alerting.
+
+Issues with This Infrastructure
+
+    SSL Termination at the Load Balancer
+
+        Traffic between load balancer and backend servers is unencrypted, so if the internal network is compromised, data can be intercepted.
+
+    Single MySQL Write Node
+
+        All writes depend on one database server; if it fails, no data can be updated (read-only mode).
+
+    Identical Components on All Servers
+
+        If every server has web, application, and database layers, a single vulnerability could compromise all layers at once; also wastes resources for workloads that could be separated for efficiency.

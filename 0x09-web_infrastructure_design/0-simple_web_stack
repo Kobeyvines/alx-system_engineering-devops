@@ -1,0 +1,45 @@
+How the One-Server Web Infrastructure Works
+
+A user opens a browser and types www.foobar.com. The request first goes through the Domain Name System (DNS), which translates the domain name into the server’s IP address — in this case, 8.8.8.8. This happens because the domain foobar.com has a www record (an A record) pointing to that IP.
+
+The browser then sends an HTTP/HTTPS request to the server at 8.8.8.8.
+
+On the server:
+
+    Nginx (Web Server) receives the request.
+
+        If the request is for a static file (e.g., an image or CSS), Nginx sends it directly to the browser.
+
+        If the request is for dynamic content (e.g., a blog post or user dashboard), Nginx passes it to the Application Server.
+
+    Application Server runs the application code stored on the server. It may need to query the MySQL Database to fetch or store data.
+
+    MySQL Database stores all persistent data, such as user accounts, posts, or product information.
+
+    The Application Server then returns the processed result (usually HTML) to Nginx, which sends it back to the user’s browser.
+
+    The browser renders the page for the user to see.
+
+Roles of Each Component
+
+    Server – A computer connected to the internet that stores and runs the application, database, and supporting services.
+
+    Domain Name – A human-friendly identifier for the website that points to the server’s IP address.
+
+    DNS Record – The www in www.foobar.com is an A record mapping the domain to the server’s IP.
+
+    Web Server (Nginx) – Manages HTTP/HTTPS requests, serves static content, and forwards dynamic requests to the application server.
+
+    Application Server – Runs the backend code that processes requests and communicates with the database.
+
+    Database (MySQL) – Stores and retrieves the website’s data persistently.
+
+    Communication Protocol – The browser and server communicate using HTTP or HTTPS over TCP/IP.
+
+Limitations of This Setup
+
+    SPOF (Single Point of Failure) – If the server fails, the entire site goes offline.
+
+    Downtime During Maintenance – Restarting Nginx or deploying new code will make the site temporarily unavailable.
+
+    Scalability Issues – The single server can only handle a limited number of simultaneous requests; heavy traffic can slow or crash the site.

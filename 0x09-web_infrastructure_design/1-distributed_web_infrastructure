@@ -1,0 +1,78 @@
+How the Three-Server Infrastructure Works
+
+The website www.foobar.com is hosted on multiple servers for better availability and load handling. The system includes:
+
+    1 Load Balancer (HAProxy)
+
+    1 Web Server (Nginx)
+
+    1 Application Server
+
+    1 Database (MySQL)
+
+    A set of application files stored on the Application Server.
+
+When a user visits www.foobar.com:
+
+    DNS resolution translates www.foobar.com into the public IP of the Load Balancer.
+
+    Load Balancer (HAProxy) receives the request and decides which backend server to send it to based on the configured distribution algorithm.
+
+    Web Server (Nginx) processes static files directly or forwards dynamic requests to the Application Server.
+
+    Application Server runs the code, fetching or storing data in the MySQL database.
+
+    The processed data is sent back through the same chain to the user’s browser.
+
+Why Each Additional Component is Added
+
+    Load Balancer (HAProxy) – Distributes incoming requests across multiple servers to avoid overloading one machine and improve fault tolerance.
+
+    Extra Servers – Ensures the site can handle more traffic and still operate if one server goes down.
+
+Load Balancer Details
+
+    Distribution Algorithm:
+    Example – Round Robin: Requests are sent to backend servers in a rotating sequence, ensuring equal load distribution over time.
+
+    Active-Active vs Active-Passive Setup:
+
+        Active-Active: All backend servers actively handle requests simultaneously. This improves performance and redundancy.
+
+        Active-Passive: Only one server actively handles requests; the other remains idle until the active one fails. This focuses on failover reliability rather than load distribution.
+
+        In this design: We are using Active-Active, so both backend servers process traffic.
+
+Database Primary-Replica (Master-Slave) Cluster
+
+    How It Works:
+
+        The Primary (Master) database handles all write operations (INSERT, UPDATE, DELETE).
+
+        The Replica (Slave) database receives a continuous copy of the Primary’s data via replication and handles read operations.
+
+        This improves performance by splitting read and write workloads.
+
+    Difference for the Application:
+
+        The application sends writes to the Primary.
+
+        The application can be configured to send reads to either Primary or Replica, but mostly to the Replica for efficiency.
+
+Issues with This Infrastructure
+
+    SPOF (Single Point of Failure)
+
+        The Load Balancer itself is a SPOF — if it fails, no traffic reaches the backend servers.
+
+        The Primary database is also a SPOF for writes.
+
+    Security Issues
+
+        No firewall → The servers are exposed to direct attacks.
+
+        No HTTPS → Data travels unencrypted, vulnerable to interception.
+
+    No Monitoring
+
+        Without monitoring tools, server or service failures may go undetected until users complain.
